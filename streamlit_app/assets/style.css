@@ -1649,26 +1649,55 @@ button[data-testid="stPopoverButton"]:hover {
     margin-bottom: 14px;
 }
 
-/* Botões viram chips com bandeira inline */
+/* Botões viram chips compactos com bandeira à esquerda + código */
 [data-testid="stMain"] [class*="st-key-lang_pt"] button,
 [data-testid="stMain"] [class*="st-key-lang_en"] button,
 [data-testid="stMain"] [class*="st-key-lang_es"] button {
-    background: var(--bg-white) !important;
+    background-color: var(--bg-white) !important;
     border: 1px solid var(--line) !important;
     color: var(--ink-soft) !important;
     border-radius: 12px !important;
-    padding: 10px 12px 10px 38px !important;
+    padding: 9px 10px 9px 36px !important;
     font-size: 13px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px;
     text-align: left !important;
     justify-content: flex-start !important;
+    align-items: center !important;
     background-repeat: no-repeat !important;
-    background-position: 10px center !important;
-    background-size: 22px 14px !important;
-    transition: all 0.18s ease;
+    background-position: 9px center !important;
+    background-size: 20px 13px !important;
+    transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
     box-shadow: none !important;
     min-height: 0 !important;
+    height: 38px !important;
     transform: none !important;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1 !important;
+}
+
+/* Ícone da bandeira fica com leve borda pra contrastar em qualquer fundo */
+[data-testid="stMain"] [class*="st-key-lang_pt"] button::before,
+[data-testid="stMain"] [class*="st-key-lang_en"] button::before,
+[data-testid="stMain"] [class*="st-key-lang_es"] button::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 13px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    pointer-events: none;
+}
+
+[data-testid="stMain"] [class*="st-key-lang_pt"] button,
+[data-testid="stMain"] [class*="st-key-lang_en"] button,
+[data-testid="stMain"] [class*="st-key-lang_es"] button {
+    position: relative;
 }
 
 [data-testid="stMain"] [class*="st-key-lang_pt"] button {
@@ -1708,7 +1737,8 @@ button[data-testid="stPopoverButton"]:hover {
     [data-testid="stMain"] [class*="st-key-lang_en"] button,
     [data-testid="stMain"] [class*="st-key-lang_es"] button {
         font-size: 12px !important;
-        padding: 8px 8px 8px 34px !important;
+        padding: 8px 8px 8px 32px !important;
+        background-position: 7px center !important;
     }
 }
 

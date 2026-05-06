@@ -394,16 +394,17 @@ def language_selector() -> None:
         unsafe_allow_html=True,
     )
 
-    cols = st.columns([5, 1.3, 1.3, 1.3])
+    cols = st.columns([7, 1, 1, 1])
     for i, code in enumerate(("pt", "en", "es")):
         with cols[i + 1]:
             cfg = LANGUAGES[code]
             is_active = code == current
             if st.button(
-                f"{cfg['code']} · {cfg['label']}",
+                cfg["code"],
                 key=f"lang_{code}",
                 use_container_width=True,
                 type="primary" if is_active else "secondary",
+                help=cfg["label"],
             ):
                 set_lang(code)
                 st.rerun()
