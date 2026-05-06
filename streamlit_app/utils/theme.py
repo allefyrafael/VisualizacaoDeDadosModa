@@ -45,33 +45,93 @@ PLOTLY_CHART_CONFIG: dict[str, bool] = {
 
 _CSS_PATH = Path(__file__).parent.parent / "assets" / "style.css"
 
-# CSS crítico inline para evitar FOUC (flash of unstyled content) na sidebar e
-# componentes principais. Aplicado antes de qualquer outro markdown.
+# CSS crítico inline para evitar FOUC (flash of unstyled content).
+# Aplicado antes de qualquer markdown subsequente — pinta a sidebar e o menu
+# de itens com o look final no PRIMEIRO frame, sem esperar o style.css externo.
 _CRITICAL_CSS = """
-:root { --bg-cream: #FAF7F2; --primary: #C2410C; --ink: #1F2937; --line: #E7E2D9; --primary-soft: #F4E4DC; }
+:root {
+    --bg-cream: #FAF7F2;
+    --bg-white: #FFFFFF;
+    --primary: #C2410C;
+    --primary-soft: #F4E4DC;
+    --ink: #1F2937;
+    --ink-soft: #4B5563;
+    --muted: #9CA3AF;
+    --gold: #D4A574;
+    --line: #E7E2D9;
+    --plum: #7C3AED;
+}
 html, body, .stApp, [data-testid="stAppViewContainer"] {
     background: #FAF7F2 !important;
     color: #1F2937;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
 }
-[data-testid="stSidebar"] {
+/* SIDEBAR base — pintada antes do React expor stSidebarNav */
+[data-testid="stSidebar"],
+section[data-testid="stSidebar"] {
     background: #F2EDE4 !important;
-    border-right: 1px solid #E7E2D9;
+    border-right: 1px solid #E7E2D9 !important;
 }
-[data-testid="stSidebar"] a {
+[data-testid="stSidebarNav"] {
+    padding: 24px 16px !important;
+}
+[data-testid="stSidebarNav"]::before {
+    content: 'NAVEGAÇÃO';
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #D4A574;
+    margin: 0 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+}
+/* MENU DE ITENS — links da multipage nav */
+[data-testid="stSidebar"] ul {
+    gap: 4px !important;
+    padding-left: 0 !important;
+    list-style: none !important;
+}
+[data-testid="stSidebar"] li {
+    list-style: none !important;
+}
+[data-testid="stSidebar"] a,
+section[data-testid="stSidebar"] a {
     padding: 12px 16px !important;
     border-radius: 10px !important;
     margin: 2px 0 !important;
     font-size: 15px !important;
     font-weight: 500 !important;
+    font-family: 'DM Sans', sans-serif !important;
     color: #1F2937 !important;
     border: 1px solid transparent !important;
+    text-decoration: none !important;
+    transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+    display: flex !important;
+    align-items: center !important;
 }
-[data-testid="stSidebar"] a[aria-current="page"] {
+[data-testid="stSidebar"] a:hover {
+    background: #F4E4DC !important;
+    color: #C2410C !important;
+    padding-left: 20px !important;
+}
+[data-testid="stSidebar"] a[aria-current="page"],
+[data-testid="stSidebar"] li:has(> a[aria-current="page"]) > a {
     background: #C2410C !important;
     color: #FFFFFF !important;
+    border-color: #C2410C !important;
+    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
+}
+/* Mobile: esconde sidebar — também já pintado aqui pra não piscar */
+@media (max-width: 900px) {
+    [data-testid="stSidebar"] { display: none !important; width: 0 !important; }
+    [data-testid="collapsedControl"] { display: none !important; }
+    [data-testid="stMain"] { margin-left: 0 !important; width: 100% !important; }
 }
 /* Esconde watermark Streamlit imediatamente */
-#MainMenu, [data-testid="stCommonFooter"] footer { visibility: hidden; }
+#MainMenu, [data-testid="stCommonFooter"] footer, footer[data-testid="stFooter"] {
+    visibility: hidden !important;
+    height: 0 !important;
+}
 """
 
 

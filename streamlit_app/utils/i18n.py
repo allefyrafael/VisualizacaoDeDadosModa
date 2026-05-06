@@ -378,38 +378,32 @@ def t(key: str, *args) -> str:
 
 
 def language_selector() -> None:
-    """Seletor de idioma com bandeiras SVG (consistente em todos os SOs).
+    """Seletor de idioma via st.button (soft rerun, sem reload de página).
 
-    Usa st.query_params para alternar idioma sem perder estado da sessão.
-    Renderiza um chip segmentado no topo direito com bandeira + nome.
+    Usa session_state para persistir entre interações. As bandeiras são
+    aplicadas via CSS ::before nas classes geradas pela key do botão.
     """
     if "lang" not in st.session_state:
         st.session_state["lang"] = "pt"
-
-    # Permite trocar via query param (?lang=en)
-    qp = st.query_params
-    if "lang" in qp and qp["lang"] in LANGUAGES and qp["lang"] != st.session_state["lang"]:
-        st.session_state["lang"] = qp["lang"]
-
     current = st.session_state["lang"]
 
-    chips = []
-    for code, cfg in LANGUAGES.items():
-        active_cls = "is-active" if code == current else ""
-        chips.append(
-            f'<a href="?lang={code}" target="_self" class="lang-chip {active_cls}" aria-label="{cfg["label"]}">'
-            f'<span class="lang-flag">{FLAG_SVGS[code]}</span>'
-            f'<span class="lang-text">'
-            f'<span class="lang-code">{cfg["code"]}</span>'
-            f'<span class="lang-name">{cfg["label"]}</span>'
-            f'</span>'
-            f'</a>'
-        )
-
     st.markdown(
-        '<div class="lang-bar">'
+        '<div class="lang-bar-wrap">'
         f'<div class="lang-bar-label">{t("lang.label")}</div>'
-        f'<div class="lang-chips">{"".join(chips)}</div>'
         '</div>',
         unsafe_allow_html=True,
     )
+
+    cols = st.columns([5, 1.3, 1.3, 1.3])
+    for i, code in enumerate(("pt", "en", "es")):
+        with cols[i + 1]:
+            cfg = LANGUAGES[code]
+            is_active = code == current
+            if st.button(
+                f"{cfg['code']} · {cfg['label']}",
+                key=f"lang_{code}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                set_lang(code)
+                st.rerun()

@@ -1625,16 +1625,12 @@ button[data-testid="stPopoverButton"]:hover {
 }
 
 /* ============================================================
-   SELETOR DE IDIOMA (topo direito) — chips com bandeira SVG
+   SELETOR DE IDIOMA (st.button + bandeira via background-image)
    ============================================================ */
-.lang-bar {
+.lang-bar-wrap {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
-    gap: 14px;
-    margin: -8px 0 18px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--line);
+    margin: -8px 0 -4px;
 }
 
 .lang-bar-label {
@@ -1643,97 +1639,76 @@ button[data-testid="stPopoverButton"]:hover {
     letter-spacing: 2.5px;
     text-transform: uppercase;
     color: var(--muted);
+    padding: 8px 4px 0;
 }
 
-.lang-chips {
-    display: inline-flex;
-    align-items: stretch;
-    gap: 0;
-    background: var(--bg-white);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 4px;
-    box-shadow: 0 1px 2px rgba(31, 41, 55, 0.04);
+/* Linha de botões do seletor com borda de separação */
+[data-testid="stMain"] [data-testid="stHorizontalBlock"]:has([class*="st-key-lang_pt"]) {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
 }
 
-.lang-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 14px;
-    border-radius: 10px;
-    text-decoration: none !important;
+/* Botões viram chips com bandeira inline */
+[data-testid="stMain"] [class*="st-key-lang_pt"] button,
+[data-testid="stMain"] [class*="st-key-lang_en"] button,
+[data-testid="stMain"] [class*="st-key-lang_es"] button {
+    background: var(--bg-white) !important;
+    border: 1px solid var(--line) !important;
     color: var(--ink-soft) !important;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    border: 1px solid transparent;
+    border-radius: 12px !important;
+    padding: 10px 12px 10px 38px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    background-repeat: no-repeat !important;
+    background-position: 10px center !important;
+    background-size: 22px 14px !important;
+    transition: all 0.18s ease;
+    box-shadow: none !important;
+    min-height: 0 !important;
+    transform: none !important;
 }
 
-.lang-chip:hover {
-    background: var(--primary-soft);
+[data-testid="stMain"] [class*="st-key-lang_pt"] button {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'><rect width='24' height='16' fill='%23009C3B'/><path d='M12 3 L21 8 L12 13 L3 8 Z' fill='%23FFDF00'/><circle cx='12' cy='8' r='2.5' fill='%23002776'/></svg>") !important;
+}
+
+[data-testid="stMain"] [class*="st-key-lang_en"] button {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'><rect width='24' height='16' fill='%23B22234'/><path d='M0 1.85h24M0 4.62h24M0 7.38h24M0 10.15h24M0 12.92h24' stroke='white' stroke-width='1.23'/><rect width='10' height='8.6' fill='%233C3B6E'/></svg>") !important;
+}
+
+[data-testid="stMain"] [class*="st-key-lang_es"] button {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'><rect width='24' height='16' fill='%23AA151B'/><rect y='4' width='24' height='8' fill='%23F1BF00'/></svg>") !important;
+}
+
+[data-testid="stMain"] [class*="st-key-lang_pt"] button:hover,
+[data-testid="stMain"] [class*="st-key-lang_en"] button:hover,
+[data-testid="stMain"] [class*="st-key-lang_es"] button:hover {
+    border-color: var(--primary) !important;
     color: var(--primary) !important;
+    transform: none !important;
 }
 
-.lang-chip.is-active {
-    background: var(--primary);
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
-}
-
-.lang-flag {
-    display: inline-flex;
-    width: 24px;
-    height: 16px;
-    border-radius: 3px;
-    overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(31, 41, 55, 0.08);
-    flex-shrink: 0;
-}
-
-.lang-flag svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.lang-text {
-    display: inline-flex;
-    flex-direction: column;
-    line-height: 1;
-    gap: 2px;
-}
-
-.lang-code {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.lang-name {
-    font-size: 10px;
-    opacity: 0.75;
-    font-weight: 500;
-}
-
-.lang-chip.is-active .lang-name {
-    opacity: 0.9;
+[data-testid="stMain"] [class*="st-key-lang_pt"] button[kind="primary"],
+[data-testid="stMain"] [class*="st-key-lang_en"] button[kind="primary"],
+[data-testid="stMain"] [class*="st-key-lang_es"] button[kind="primary"] {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25) !important;
 }
 
 @media (max-width: 600px) {
-    .lang-bar {
-        flex-wrap: wrap;
-        gap: 8px;
+    .lang-bar-wrap {
         justify-content: flex-start;
     }
-    .lang-bar-label {
-        flex-basis: 100%;
-    }
-    .lang-chip {
-        padding: 6px 10px;
-        gap: 7px;
-    }
-    .lang-name {
-        display: none;
+    [data-testid="stMain"] [class*="st-key-lang_pt"] button,
+    [data-testid="stMain"] [class*="st-key-lang_en"] button,
+    [data-testid="stMain"] [class*="st-key-lang_es"] button {
+        font-size: 12px !important;
+        padding: 8px 8px 8px 34px !important;
     }
 }
 
