@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insights com ML — Moda em Dados</title>
+  <meta name="description" content="Moda em Dados: visualização e machine learning aplicados ao e-commerce de moda brasileiro. Projeto de portfólio de Allefy Rafael.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23C2410C'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='Georgia'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/moda-base.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body data-page="ml">
+  <a class="skip-link" href="#app">Pular para o conteúdo</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" data-i18n-html="home.hero.title">Moda em <em>Dados</em></a>
+      <nav class="main-nav" aria-label="Páginas">
+        <a href="index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="visao-geral.html" data-nav="overview" data-i18n="nav.overview">Visão Geral</a>
+        <a href="analise.html" data-nav="analysis" data-i18n="nav.analysis">Análise Exploratória</a>
+        <a href="ml.html" data-nav="ml" data-i18n="nav.ml">Insights com ML</a>
+        <a href="sobre.html" data-nav="about" data-i18n="nav.about">Sobre</a>
+      </nav>
+      <div class="lang-switch" role="group" aria-label="Idioma">
+        <button type="button" data-lang="pt" title="Português">PT</button>
+        <button type="button" data-lang="en" title="English">EN</button>
+        <button type="button" data-lang="es" title="Español">ES</button>
+      </div>
+    </div>
+  </header>
+  <main id="app" class="page" tabindex="-1"><p class="loading">Carregando…</p></main>
+  <footer class="footer" id="footer"></footer>
+  <script src="vendor/plotly-cartesian-2.35.2.min.js"></script>
+  <script src="js/forest.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
