@@ -35,6 +35,11 @@
     return text.replace(/\{(\d+)\}/g, function (m, i) { return args[i] !== undefined ? args[i] : m; });
   }
 
+  function dataLabel(kind, value) {
+    var key = "data." + kind + "." + value;
+    return dict && dict[lang] && dict[lang][key] || value;
+  }
+
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -134,8 +139,8 @@
       textposition: "outside", cliponaxis: false,
       textfont: { family: "DM Sans, sans-serif", size: 12, color: COLORS.ink },
       marker: { color: x, colorscale: [[0, COLORS.gold], [1, COLORS.primary]], showscale: false },
-      hovertemplate: "<b>%{y}</b><br>%{x} produtos<extra></extra>",
-    }], baseLayout(520, { xaxis: { title: { text: "Produtos no catálogo" } }, yaxis: { title: { text: "" } } }));
+      hovertemplate: "<b>%{y}</b><br>%{x} " + t("chart.products") + "<extra></extra>",
+    }], baseLayout(520, { xaxis: { title: { text: t("chart.products.catalog") } }, yaxis: { title: { text: "" } } }));
   }
 
   function histRatings(id, rows) {
@@ -143,11 +148,11 @@
     var m = mean(x);
     plot(id, [{
       type: "histogram", x: x, nbinsx: 20, marker: { color: COLORS.primary, line: { width: 1, color: "white" } },
-      opacity: 0.85, hovertemplate: "Nota: %{x}<br>%{y} produtos<extra></extra>",
+      opacity: 0.85, hovertemplate: t("table.col.rating") + ": %{x}<br>%{y} " + t("chart.products") + "<extra></extra>",
     }], baseLayout(380, {
-      xaxis: { title: { text: "Nota" } }, yaxis: { title: { text: "Produtos" } },
+      xaxis: { title: { text: t("table.col.rating") } }, yaxis: { title: { text: t("chart.products") } },
       shapes: [{ type: "line", xref: "x", yref: "paper", x0: m, x1: m, y0: 0, y1: 1, line: { color: COLORS.plum, dash: "dash" } }],
-      annotations: [{ x: m, y: 1, xref: "x", yref: "paper", text: "média " + fix(m, 2), showarrow: false,
+      annotations: [{ x: m, y: 1, xref: "x", yref: "paper", text: t("chart.mean") + " " + fix(m, 2), showarrow: false,
         xanchor: "right", yanchor: "top", font: { color: COLORS.plum } }],
     }));
   }
@@ -214,7 +219,7 @@
       var checks = function (name, options, selected) {
         return options.map(function (o) {
           return '<label><input type="checkbox" name="' + name + '" value="' + esc(o) + '"' +
-            (selected.indexOf(o) >= 0 ? " checked" : "") + "> " + esc(o) + "</label>";
+            (selected.indexOf(o) >= 0 ? " checked" : "") + "> " + esc(name === "brand" ? o : dataLabel(name, o)) + "</label>";
         }).join("");
       };
 
@@ -349,7 +354,7 @@
         c[0] + '">' + t(c[1]) + (active ? (dir > 0 ? " ↑" : " ↓") : "") + "</button></th>";
     }).join("");
     var bodyRows = top.map(function (r) {
-      return "<tr><td class='title'>" + esc(r.t) + "</td><td>" + esc(r.b) + "</td><td>" + esc(r.g) + "</td><td>" + esc(r.s) +
+      return "<tr><td class='title'>" + esc(r.t) + "</td><td>" + esc(r.b) + "</td><td>" + esc(dataLabel("gender", r.g)) + "</td><td>" + esc(dataLabel("season", r.s)) +
         "</td><td>" + esc(r.m) + "</td><td class='num'>" + fix(r.r, 1) + "</td><td class='num'>" + (r.n == null ? 0 : Math.trunc(r.n)) +
         "</td><td class='num'>" + brl(r.p) + "</td></tr>";
     }).join("");
@@ -371,14 +376,14 @@
       var ins = a.insights;
       var tabs = [
         ["scatter", "q1", "<strong>R$ " + fix(ins.q1.mean, 2) + "</strong> · " + (ins.q1.delta >= 0 ? "+" : "") + fix(ins.q1.delta, 1) + "%"],
-        ["heatmap", "q2", "avaliações × vendidos = <strong>" + fix(ins.q2.qa, 2) + "</strong> · preço × nota = <strong>" + fix(ins.q2.pn, 2) + "</strong>"],
+        ["heatmap", "q2", t("analysis.q2.insight", "<strong>" + fix(ins.q2.qa, 2) + "</strong>", "<strong>" + fix(ins.q2.pn, 2) + "</strong>")],
         ["bars", "q3", "<strong>" + esc(ins.q3.brand) + "</strong> · " + ins.q3.count + " (" + fix(ins.q3.pct, 1) + "%)"],
-        ["pie", "q4", "<strong>" + esc(ins.q4.gender) + "</strong> · <strong>" + fix(ins.q4.pct, 1) + "%</strong>"],
-        ["density", "q5", "<strong>" + esc(ins.q5.top) + "</strong> R$ " + fix(ins.q5.top_price, 2) + " · <strong>" + esc(ins.q5.bottom) + "</strong> R$ " + fix(ins.q5.bottom_price, 2)],
+        ["pie", "q4", "<strong>" + esc(dataLabel("gender", ins.q4.gender)) + "</strong> · <strong>" + fix(ins.q4.pct, 1) + "%</strong>"],
+        ["density", "q5", "<strong>" + esc(dataLabel("season", ins.q5.top)) + "</strong> R$ " + fix(ins.q5.top_price, 2) + " · <strong>" + esc(dataLabel("season", ins.q5.bottom)) + "</strong> R$ " + fix(ins.q5.bottom_price, 2)],
       ];
       app.innerHTML =
         hero(t("analysis.hero.eyebrow"), t("analysis.hero.title"), t("analysis.hero.subtitle")) +
-        '<div class="story-flow"><div class="story-flow-eyebrow">METODOLOGIA · STORYTELLING WITH DATA</div><div class="story-flow-grid">' +
+        '<div class="story-flow"><div class="story-flow-eyebrow">' + t("analysis.story.eyebrow") + '</div><div class="story-flow-grid">' +
         [1, 2, 3, 4].map(function (i) {
           return '<div class="story-cell' + (i === 4 ? " is-final" : "") + '"><div class="story-num">0' + i + '</div><div class="story-name">' + t("analysis.story.0" + i) + "</div></div>";
         }).join('<div class="story-link"></div>') + "</div></div>" +
@@ -429,24 +434,27 @@
       var maxSize = Math.max.apply(null, s.size);
       plot("ch-q1", [{
         type: "scatter", mode: "markers", x: s.x, y: s.y,
-        customdata: s.brand.map(function (b, i) { return [b, s.gender[i], s.season[i], s.rating[i]]; }),
+        customdata: s.brand.map(function (b, i) { return [b, dataLabel("gender", s.gender[i]), dataLabel("season", s.season[i]), s.rating[i]]; }),
         marker: {
           color: s.rating, size: s.size, sizemode: "area", sizeref: 2 * maxSize / (20 * 20), sizemin: 0,
           colorscale: [[0, COLORS.muted], [0.5, COLORS.gold], [1, COLORS.primary]],
-          colorbar: { title: { text: "Nota" }, thickness: 14, outlinewidth: 0 },
+          colorbar: { title: { text: t("table.col.rating") }, thickness: 14, outlinewidth: 0 },
           line: { width: 0.4, color: "white" }, opacity: 0.78,
         },
-        hovertemplate: "Marca=%{customdata[0]}<br>Gênero=%{customdata[1]}<br>Temporada=%{customdata[2]}<br>Nota=%{customdata[3]:.1f}<br>Preço (R$)=%{y:.2f}<br>Número de avaliações=%{x}<extra></extra>",
-      }], baseLayout(520, { xaxis: { title: { text: "Número de avaliações" } }, yaxis: { title: { text: "Preço (R$)" } } }));
+        hovertemplate: t("table.col.brand") + "=%{customdata[0]}<br>" + t("table.col.gender") + "=%{customdata[1]}<br>" +
+          t("table.col.season") + "=%{customdata[2]}<br>" + t("table.col.rating") + "=%{customdata[3]:.1f}<br>" +
+          t("filter.price.label") + "=%{y:.2f}<br>" + t("chart.reviews.count") + "=%{x}<extra></extra>",
+      }], baseLayout(520, { xaxis: { title: { text: t("chart.reviews.count") } }, yaxis: { title: { text: t("filter.price.label") } } }));
     },
     q2: function (a) {
-      var labels = { "Nota": "Nota", "N_Avaliações": "Avaliações", "Desconto": "Desconto", "Preço": "Preço", "Qtd_Vendidos_Num": "Qtd. Vendidos" };
+      var labels = { "Nota": t("table.col.rating"), "N_Avaliações": t("table.col.reviews"),
+        "Desconto": t("ml.form.discount"), "Preço": t("table.col.price"), "Qtd_Vendidos_Num": t("chart.sold") };
       var pretty = a.corr.cols.map(function (c) { return labels[c] || c; });
       plot("ch-q2", [{
         type: "heatmap", z: a.corr.z, x: pretty, y: pretty, zmin: -1, zmax: 1, text: a.corr.z, texttemplate: "%{text:.2f}",
         textfont: { family: "DM Sans, sans-serif", size: 13, color: COLORS.ink },
         colorscale: [[0, "#0891B2"], [0.5, "#FAF7F2"], [1, COLORS.primary]],
-        colorbar: { title: { text: "Correlação" }, thickness: 14, outlinewidth: 0 },
+        colorbar: { title: { text: t("chart.correlation") }, thickness: 14, outlinewidth: 0 },
       }], baseLayout(480, { xaxis: { side: "bottom" } }));
     },
     q3: function () {
@@ -455,23 +463,23 @@
     q4: function (a) {
       var total = a.genders.values.reduce(function (s, v) { return s + v; }, 0);
       plot("ch-q4", [{
-        type: "pie", labels: a.genders.labels, values: a.genders.values, hole: 0.55, sort: false,
+        type: "pie", labels: a.genders.labels.map(function (v) { return dataLabel("gender", v); }), values: a.genders.values, hole: 0.55, sort: false,
         marker: { colors: PALETTE.slice(0, a.genders.labels.length), line: { color: "white", width: 3 } },
         textinfo: "label+percent", textfont: { family: "DM Sans, sans-serif", size: 13, color: COLORS.ink },
-        hovertemplate: "<b>%{label}</b><br>%{value} produtos (%{percent})<extra></extra>",
+        hovertemplate: "<b>%{label}</b><br>%{value} " + t("chart.products") + " (%{percent})<extra></extra>",
       }], baseLayout(480, {
         showlegend: false,
-        annotations: [{ text: "<b>" + total + "</b><br><span style='font-size:11px;color:#9CA3AF'>PRODUTOS</span>", x: 0.5, y: 0.5,
+        annotations: [{ text: "<b>" + total + "</b><br><span style='font-size:11px;color:#9CA3AF'>" + t("chart.products").toUpperCase() + "</span>", x: 0.5, y: 0.5,
           xref: "paper", yref: "paper", font: { size: 22, color: COLORS.ink }, showarrow: false }],
       }));
     },
     q5: function (a) {
       plot("ch-q5", a.violins.map(function (v, i) {
         return {
-          type: "violin", y: v.y, name: v.name, box: { visible: true }, meanline: { visible: true },
+          type: "violin", y: v.y, name: dataLabel("season", v.name), box: { visible: true }, meanline: { visible: true },
           fillcolor: PALETTE[i % PALETTE.length], line: { color: COLORS.ink }, opacity: 0.75, points: false,
         };
-      }), baseLayout(500, { yaxis: { title: { text: "Preço (R$)" } }, xaxis: { title: { text: "" } }, violinmode: "group", showlegend: false }));
+      }), baseLayout(500, { yaxis: { title: { text: t("filter.price.label") } }, xaxis: { title: { text: "" } }, violinmode: "group", showlegend: false }));
     },
   };
 
@@ -489,8 +497,8 @@
           gender: genders[0], rating: 4.5, reviews: 200, discount: 10, result: null };
       }
       var f = mlForm;
-      var options = function (list, sel) {
-        return list.map(function (o) { return '<option value="' + esc(o) + '"' + (o === sel ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("");
+      var options = function (list, sel, kind) {
+        return list.map(function (o) { return '<option value="' + esc(o) + '"' + (o === sel ? " selected" : "") + ">" + esc(kind ? dataLabel(kind, o) : o) + "</option>"; }).join("");
       };
       var posTotal = Object.values(rv.pos).reduce(function (s, v) { return s + v; }, 0);
       var negTotal = Object.values(rv.neg).reduce(function (s, v) { return s + v; }, 0);
@@ -508,10 +516,10 @@
         section(t("ml.sim.eyebrow"), t("ml.sim.title"), t("ml.sim.subtitle")) +
         '<div class="cols-2"><form class="ml-form" id="ml-form"><div class="ml-form-eyebrow">' + t("ml.form.eyebrow") + '</div><div class="form-grid">' +
         '<label class="field">' + t("filter.brand") + '<select name="brand">' + options(brands, f.brand) + "</select></label>" +
-        '<label class="field">' + t("filter.gender") + '<select name="gender">' + options(genders, f.gender) + "</select></label>" +
+        '<label class="field">' + t("filter.gender") + '<select name="gender">' + options(genders, f.gender, "gender") + "</select></label>" +
         '<label class="field">' + t("table.col.material") + '<select name="material">' + options(materials, f.material) + "</select></label>" +
         '<label class="field">' + t("ml.form.expected_rating") + ' <output id="o-rating"></output><input type="range" name="rating" min="1" max="5" step="0.1" value="' + f.rating + '"></label>' +
-        '<label class="field">' + t("filter.season") + '<select name="season">' + options(seasons, f.season) + "</select></label>" +
+        '<label class="field">' + t("filter.season") + '<select name="season">' + options(seasons, f.season, "season") + "</select></label>" +
         '<label class="field">' + t("ml.form.review_volume") + ' <output id="o-reviews"></output><input type="range" name="reviews" min="0" max="5000" step="50" value="' + f.reviews + '"></label>' +
         '<label class="field full">' + t("ml.form.discount") + ' <output id="o-discount"></output><input type="range" name="discount" min="0" max="90" step="5" value="' + f.discount + '"></label>' +
         '</div><button type="submit" class="btn btn-primary">' + t("ml.form.submit") + "</button></form>" +
@@ -577,7 +585,7 @@
         type: "bar", orientation: "h", x: imp, y: asc.map(function (e) { return e[0]; }), text: imp.map(function (v) { return fix(v, 3); }),
         textposition: "outside", cliponaxis: false,
         marker: { color: imp, colorscale: [[0, COLORS.gold], [1, COLORS.primary]], showscale: false },
-      }], baseLayout(440, { xaxis: { title: { text: "Importância relativa" } }, yaxis: { title: { text: "" } } }));
+      }], baseLayout(440, { xaxis: { title: { text: t("chart.relative.importance") } }, yaxis: { title: { text: "" } } }));
       document.getElementById("feat-insight").innerHTML =
         insight("<strong>" + agg[0][0] + "</strong> · <strong>" + fix(agg[0][1] * 100, 1) + "%</strong>", t("ml.feat.eyebrow"));
 
@@ -587,8 +595,8 @@
         var x = items.map(function (e) { return e[1]; });
         plot(id, [{
           type: "bar", orientation: "h", x: x, y: items.map(function (e) { return e[0]; }), text: x, textposition: "outside", cliponaxis: false,
-          marker: { color: color, line: { width: 0 } }, hovertemplate: "<b>%{y}</b><br>%{x} menções<extra></extra>",
-        }], baseLayout(420, { xaxis: { title: { text: "Menções nos reviews" } }, yaxis: { title: { text: "" } }, showlegend: false }));
+          marker: { color: color, line: { width: 0 } }, hovertemplate: "<b>%{y}</b><br>%{x} " + t("chart.mentions") + "<extra></extra>",
+        }], baseLayout(420, { xaxis: { title: { text: t("chart.review.mentions") } }, yaxis: { title: { text: "" } }, showlegend: false }));
       };
       reviewBars("ch-pos", rv.pos, COLORS.moss);
       reviewBars("ch-neg", rv.neg, COLORS.primary);
