@@ -34,3 +34,15 @@ python -m http.server 8720 --directory web
 
 O workflow `.github/workflows/azure-static-web-apps.yml` publica a pasta `web/` a cada push em `main`
 usando o secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+
+### Cópia de continuidade
+
+O workflow `.github/workflows/pages-backup.yml` publica a mesma pasta no GitHub Pages depois que
+o workflow da Azure termina com sucesso em `main`. Ele também pode ser executado manualmente. Antes
+de enviar, regenera os JSONs e compara as previsões do navegador com o scikit-learn. O site usa
+caminhos relativos e pode abrir no endereço do projeto no GitHub Pages, sem alterar
+`moda.allefyrafael.codes`.
+
+Para uma eventual troca de hospedagem: conferir as cinco páginas, PT/EN/ES, filtros, gráficos e
+previsões na cópia; associar o domínio no GitHub Pages; mudar somente o CNAME `moda` e verificar
+HTTPS. O retorno é restaurar o CNAME anterior enquanto a assinatura Azure estiver ativa.
